@@ -13,8 +13,16 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 1
     steps:
-      - name: Remove ok-to-test label if author is not an org member
+      - name: log trigger event
+        #  EVENT: "${{ github.event }}"
         env:
-          EVENT: ${{ github.event }}
+          GH_TOKEN: ${{ github.token }}
+          SENDER: ${{ github.event.sender.login }}
+          REPO: ${{ github.repository }}
         run: |
-          echo "$EVENT"
+          if gh api "repos/$REPO/collaborators/$SENDER/permission" --jq .permission | grep -q -e admin -e write; then
+            echo "Synchronized by maintainer"
+          else
+            echo "Synchronized by untrusted user"
+          fi
+            
