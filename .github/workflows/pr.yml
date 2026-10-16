@@ -1,0 +1,20 @@
+name: log trigger event
+
+on:
+  pull_request: # zizmor: ignore[dangerous-triggers] See #11332.
+    types:
+      - synchronize
+
+permissions: {}
+
+jobs:
+  log-trigger-event:
+    name: log trigger event
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Remove ok-to-test label if author is not an org member
+        env:
+          EVENT: ${{ github.event }}
+        run: |
+          echo "$EVENT"
